@@ -1,0 +1,5 @@
+PATIENT RECORD: John Doe
+DOB: 1980-01-15
+Blood Type: O+
+Allergies: Penicillin
+--- END OF RECORD ---
