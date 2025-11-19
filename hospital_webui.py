@@ -1,18 +1,20 @@
-import sys
+# hospital_webui.py
+# FastAPI web console for a HospitalNode (no manual IP/port entry).
+
 import argparse
 import os
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse
 from pydantic import BaseModel
 import uvicorn
 
 from hospital_node import HospitalNode, CONFIG
+from registry import list_hospitals
 
 
 class RequestFileBody(BaseModel):
     target: str
-    ip: str
-    port: int
     file_name: str
 
 
@@ -21,11 +23,11 @@ class ApproveBody(BaseModel):
     approved: bool
 
 
-def create_app(hospital_name: str) -> FastAPI:
+def create_app(hospital_name: str, public_host: str | None = None) -> FastAPI:
     if hospital_name not in CONFIG:
         raise ValueError(f"Unknown hospital '{hospital_name}'")
 
-    node = HospitalNode(hospital_name)
+    node = HospitalNode(hospital_name, public_host=public_host)
     node.start_server()
     logger = node.logger
 
@@ -33,17 +35,18 @@ def create_app(hospital_name: str) -> FastAPI:
 
     @app.get("/", response_class=HTMLResponse)
     async def index():
-        # Target hospital dropdown options
-        options_html = "".join(
-            f'<option value="{name}">{name}</option>'
-            for name in CONFIG.keys()
-            if name != hospital_name
-        ) or '<option value="">(no peers configured)</option>'
+        # Target hospital dropdown options from MongoDB registry (exclude myself)
+        try:
+            peers = list_hospitals(exclude_name=hospital_name)
+        except Exception as e:
+            logger.error(f"Failed to load peers from registry: {e}")
+            peers = []
 
-        # Map of default ports (for auto-fill)
-        ports_js = "{ " + ", ".join(
-            f'"{name}": {cfg["port"]}' for name, cfg in CONFIG.items()
-        ) + " }"
+        options_html = "".join(
+            f'<option value="{doc["name"]}">{doc["name"]}</option>'
+            for doc in peers
+            if doc.get("name")
+        ) or '<option value="">(no peers registered)</option>'
 
         return f"""
 <!DOCTYPE html>
@@ -60,7 +63,7 @@ def create_app(hospital_name: str) -> FastAPI:
       --shadow-soft: 0 8px 24px rgba(15,23,42,0.08);
       --text-main: #111827;
       --text-muted: #6b7280;
-      --accent: #059669;       /* teal/green */
+      --accent: #059669;
       --accent-soft: #ecfdf5;
       --accent-blue: #2563eb;
       --danger: #dc2626;
@@ -102,11 +105,6 @@ def create_app(hospital_name: str) -> FastAPI:
       border-radius: 6px;
       background: radial-gradient(circle at 20% 0, #22c55e, #14b8a6);
       box-shadow: 0 0 10px rgba(34,197,94,0.7);
-    }}
-    header p {{
-      margin: 4px 0 0;
-      font-size: 12px;
-      color: var(--text-muted);
     }}
     header .meta {{
       margin-top: 6px;
@@ -181,11 +179,6 @@ def create_app(hospital_name: str) -> FastAPI:
       font-size: 15px;
       font-weight: 600;
     }}
-    .card-header-left p {{
-      margin: 2px 0 0;
-      font-size: 11px;
-      color: var(--text-muted);
-    }}
     .pill-label {{
       display: inline-flex;
       align-items: center;
@@ -255,9 +248,6 @@ def create_app(hospital_name: str) -> FastAPI:
       box-shadow: 0 2px 6px rgba(16,185,129,0.5);
       transition: all 0.15s ease;
       font-weight: 500;
-    }}
-    .btnेस्ट span.icon {{
-      font-size: 13px;
     }}
     .btn:hover {{
       transform: translateY(-1px);
@@ -401,11 +391,9 @@ def create_app(hospital_name: str) -> FastAPI:
       <span class="logo-mark"></span>
       {hospital_name} – Secure Record Exchange
     </h1>
-    <!-- Removed wordy subtitle on purpose -->
     <div class="meta">
       <span class="pill"><span class="dot"></span> Node online</span>
       <span class="pill">Hospital: {hospital_name}</span>
-      <!-- Removed P2P Port + Web console chips as requested -->
     </div>
   </header>
 
@@ -415,7 +403,6 @@ def create_app(hospital_name: str) -> FastAPI:
       <div class="section-header">
         <div>
           <div class="section-title">Session control</div>
-          <!-- Removed sentence: "Outgoing requests and incoming approvals are clearly separated." -->
         </div>
       </div>
       <div class="cards-grid">
@@ -424,7 +411,6 @@ def create_app(hospital_name: str) -> FastAPI:
           <div class="card-header">
             <div class="card-header-left">
               <h2>Outgoing file request</h2>
-              <!-- Subtitle removed -->
             </div>
             <span class="pill-label">Client</span>
           </div>
@@ -432,17 +418,9 @@ def create_app(hospital_name: str) -> FastAPI:
           <div class="row">
             <div class="col">
               <label for="target">Target hospital</label>
-              <select id="target" onchange="onTargetChange()">
+              <select id="target">
                 {options_html}
               </select>
-            </div>
-            <div class="col">
-              <label for="ip">Target IP</label>
-              <input id="ip" value="127.0.0.1" />
-            </div>
-            <div style="width:120px;">
-              <label for="port">P2P port</label>
-              <input id="port" placeholder="6500x" />
             </div>
           </div>
 
@@ -465,7 +443,6 @@ def create_app(hospital_name: str) -> FastAPI:
           <div class="card-header">
             <div class="card-header-left">
               <h2>Incoming requests</h2>
-              <!-- Subtitle removed -->
             </div>
             <span class="pill-label blue">Server</span>
           </div>
@@ -509,11 +486,9 @@ def create_app(hospital_name: str) -> FastAPI:
           <div class="card-header">
             <div class="card-header-left">
               <h2>File repository</h2>
-              <!-- Removed "Records that this node can serve or has received." -->
             </div>
           </div>
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-            <!-- Removed extra subtitle text here as well -->
             <span></span>
             <button class="file-download-btn" onclick="reloadFiles()">Refresh list</button>
           </div>
@@ -537,12 +512,10 @@ def create_app(hospital_name: str) -> FastAPI:
           <div class="card-header">
             <div class="card-header-left">
               <h2>Activity & logs</h2>
-              <!-- Removed "High-level view of cryptographic and transfer events." -->
             </div>
           </div>
 
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-            <!-- Keep a very short hint -->
             <span class="section-subtitle">Newest events shown first.</span>
             <div style="display:flex; gap:6px; flex-wrap:wrap;">
               <button class="btn btn-secondary" onclick="loadLogs()">
@@ -573,7 +546,6 @@ def create_app(hospital_name: str) -> FastAPI:
   </main>
 
   <script>
-    const defaultPorts = {ports_js};
     let selectedId = null;
 
     function setStatus(msg, isError) {{
@@ -587,14 +559,6 @@ def create_app(hospital_name: str) -> FastAPI:
         el.classList.add('status-error');
       }} else {{
         el.classList.remove('status-error');
-      }}
-    }}
-
-    function onTargetChange() {{
-      const target = document.getElementById('target').value;
-      const portInput = document.getElementById('port');
-      if (defaultPorts[target]) {{
-        portInput.value = defaultPorts[target];
       }}
     }}
 
@@ -647,16 +611,14 @@ def create_app(hospital_name: str) -> FastAPI:
 
     async function sendRequest() {{
       const target = document.getElementById('target').value.trim();
-      const ip = document.getElementById('ip').value.trim();
-      const port = document.getElementById('port').value.trim();
       const file = document.getElementById('file').value.trim();
 
       if (!target) {{
         alert('Select a target hospital.');
         return;
       }}
-      if (!ip || !port || !file) {{
-        alert('IP, port, and file name are required.');
+      if (!file) {{
+        alert('File name is required.');
         return;
       }}
 
@@ -665,7 +627,7 @@ def create_app(hospital_name: str) -> FastAPI:
         const res = await fetch('/api/request', {{
           method: 'POST',
           headers: {{ 'Content-Type': 'application/json' }},
-          body: JSON.stringify({{ target, ip, port: parseInt(port), file_name: file }})
+          body: JSON.stringify({{ target, file_name: file }})
         }});
         const txt = await res.text();
         let js = null;
@@ -777,7 +739,6 @@ def create_app(hospital_name: str) -> FastAPI:
           return;
         }}
 
-        // data is returned newest-first from the API
         data.forEach((entry) => {{
           const tr = document.createElement('tr');
 
@@ -812,7 +773,6 @@ def create_app(hospital_name: str) -> FastAPI:
 
     // Bootstrap
     setInterval(loadPending, 800);
-    onTargetChange();
     loadPending();
     reloadFiles();
     loadLogs();
@@ -836,9 +796,8 @@ def create_app(hospital_name: str) -> FastAPI:
 
     @app.post("/api/request")
     async def api_request(body: RequestFileBody):
-        if body.target not in CONFIG:
-            raise HTTPException(status_code=400, detail="Unknown target hospital.")
-        ok = node.request_record(body.target, body.ip, body.port, body.file_name)
+        # We rely on MongoDB registry + HospitalNode.request_record
+        ok = node.request_record(body.target, body.file_name)
         if not ok:
             raise HTTPException(
                 status_code=500,
@@ -860,12 +819,14 @@ def create_app(hospital_name: str) -> FastAPI:
                 if not os.path.isfile(full):
                     continue
                 size = os.path.getsize(full)
-                files.append({
-                    "name": name,
-                    "kind": kind,
-                    "size": size,
-                    "size_human": _human_size(size),
-                })
+                files.append(
+                    {
+                        "name": name,
+                        "kind": kind,
+                        "size": size,
+                        "size_human": _human_size(size),
+                    }
+                )
 
         add_files_from(node.conf["data_dir"], "data")
         add_files_from(node.conf["received_dir"], "received")
@@ -879,12 +840,16 @@ def create_app(hospital_name: str) -> FastAPI:
         if "/" in filename or "\\" in filename:
             raise HTTPException(status_code=400, detail="Invalid filename.")
 
-        dir_path = node.conf["data_dir"] if kind == "data" else node.conf["received_dir"]
+        dir_path = (
+            node.conf["data_dir"] if kind == "data" else node.conf["received_dir"]
+        )
         full_path = os.path.join(dir_path, filename)
         if not os.path.isfile(full_path):
             raise HTTPException(status_code=404, detail="File not found.")
 
-        return FileResponse(full_path, filename=filename, media_type="application/octet-stream")
+        return FileResponse(
+            full_path, filename=filename, media_type="application/octet-stream"
+        )
 
     # ===== API: logs (normalized, newest-first) =====
 
@@ -917,17 +882,19 @@ def create_app(hospital_name: str) -> FastAPI:
                     first = parts[0]
                     lb = first.find("[")
                     if lb != -1:
-                        level = first[lb+1:].strip()
+                        level = first[lb + 1 :].strip()
                     msg = parts[2].strip()
             except Exception:
                 pass
 
             summary = _normalize_log_message(msg)
-            entries.append({
-                "ts": ts or None,
-                "level": level or "INFO",
-                "summary": summary,
-            })
+            entries.append(
+                {
+                    "ts": ts or None,
+                    "level": level or "INFO",
+                    "summary": summary,
+                }
+            )
 
         # newest first
         entries.reverse()
@@ -955,6 +922,7 @@ def create_app(hospital_name: str) -> FastAPI:
 
 
 # ===== Helpers =====
+
 
 def _human_size(num: int) -> str:
     for unit in ["B", "KB", "MB", "GB"]:
@@ -1063,7 +1031,6 @@ def _normalize_log_message(msg: str) -> str:
 
     # Non-structured logs: map common phrases to high-level descriptions
     text = msg
-
     lowered = text.lower()
 
     if "starting node" in lowered:
@@ -1097,11 +1064,17 @@ def _normalize_log_message(msg: str) -> str:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("hospital", choices=list(CONFIG.keys()))
-    parser.add_argument("--host", default="127.0.0.1")
-    parser.add_argument("--port", type=int, default=8000)
+    parser.add_argument("--host", default="127.0.0.1", help="Host for the web UI (FastAPI)")
+    parser.add_argument("--port", type=int, default=8000, help="Port for the web UI (FastAPI)")
+    parser.add_argument(
+        "--public-host",
+        dest="public_host",
+        default=None,
+        help="IP/DNS that other hospitals should use to reach this node (stored in Mongo registry)",
+    )
     args = parser.parse_args()
 
-    app = create_app(args.hospital)
+    app = create_app(args.hospital, public_host=args.public_host)
     uvicorn.run(app, host=args.host, port=args.port)
 
 

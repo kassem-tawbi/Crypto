@@ -1,13 +1,22 @@
 # crypto_utils.py
 # A helper module for all cryptographic operations.
+# NOTE: HospitalNode now uses separate RSA key pairs for:
+#   - signing (sign_message / verify_signature)
+#   - encryption (rsa_encrypt / rsa_decrypt)
 
 import os
 from cryptography.hazmat.primitives.asymmetric import rsa, padding as rsa_padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.primitives import serialization, padding as sym_padding, hashes, hmac
+from cryptography.hazmat.primitives import (
+    serialization,
+    padding as sym_padding,
+    hashes,
+    hmac,
+)
 
 
 # --- RSA Functions (for Key Exchange & Signatures) ---
+
 
 def load_private_key(filename):
     """Loads an RSA private key from a PEM file."""
@@ -27,22 +36,22 @@ def load_public_key(filename):
 def sign_message(message, private_key):
     """Signs a message with a private key (Authentication)."""
     if isinstance(message, str):
-        message = message.encode('utf-8')
+        message = message.encode("utf-8")
 
     return private_key.sign(
         message,
         rsa_padding.PSS(
             mgf=rsa_padding.MGF1(hashes.SHA256()),
-            salt_length=rsa_padding.PSS.MAX_LENGTH
+            salt_length=rsa_padding.PSS.MAX_LENGTH,
         ),
-        hashes.SHA256()
+        hashes.SHA256(),
     )
 
 
 def verify_signature(message, signature, public_key):
     """Verifies a signature with a public key (Authentication)."""
     if isinstance(message, str):
-        message = message.encode('utf-8')
+        message = message.encode("utf-8")
 
     try:
         public_key.verify(
@@ -50,9 +59,9 @@ def verify_signature(message, signature, public_key):
             message,
             rsa_padding.PSS(
                 mgf=rsa_padding.MGF1(hashes.SHA256()),
-                salt_length=rsa_padding.PSS.MAX_LENGTH
+                salt_length=rsa_padding.PSS.MAX_LENGTH,
             ),
-            hashes.SHA256()
+            hashes.SHA256(),
         )
         return True
     except Exception:
@@ -66,8 +75,8 @@ def rsa_encrypt(data, public_key):
         rsa_padding.OAEP(
             mgf=rsa_padding.MGF1(algorithm=hashes.SHA256()),
             algorithm=hashes.SHA256(),
-            label=None
-        )
+            label=None,
+        ),
     )
 
 
@@ -78,12 +87,13 @@ def rsa_decrypt(encrypted_data, private_key):
         rsa_padding.OAEP(
             mgf=rsa_padding.MGF1(algorithm=hashes.SHA256()),
             algorithm=hashes.SHA256(),
-            label=None
-        )
+            label=None,
+        ),
     )
 
 
 # --- AES & HMAC Functions (for Data Encryption & Integrity) ---
+
 
 def aes_encrypt(data, key):
     """Encrypts data using AES-256-CBC."""
@@ -104,7 +114,6 @@ def aes_encrypt(data, key):
 
 def aes_decrypt(ciphertext, key, iv):
     """Decrypts data using AES-256-CBC."""
-    # Create AES cipher
     cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
     decryptor = cipher.decryptor()
     padded_data = decryptor.update(ciphertext) + decryptor.finalize()
