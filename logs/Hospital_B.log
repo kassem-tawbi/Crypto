@@ -491,3 +491,167 @@
 2025-11-10 13:25:18 [INFO] [Hospital_B] AES_Decrypt_Start | algo=AES-256-CBC | ciphertext_len=112 | iv_hex=c7028230313b4ad4cd88ea293a060547
 2025-11-10 13:25:18 [INFO] [Hospital_B] AES_Decrypt_Done | plaintext_len=103 | plaintext_preview=50415449454e54205245434f52443a20...
 2025-11-10 13:25:18 [INFO] [Hospital_B] Decrypted record saved to 'hospital_B_received\RECEIVED_patient_123.txt'
+2025-11-10 21:14:40 [INFO] [Hospital_B] Initializing node with cryptographic material...
+2025-11-10 21:14:40 [INFO] [Hospital_B] Loading private key from 'Hospital_B_private.pem'...
+2025-11-10 21:14:40 [INFO] [Hospital_B] PrivateKeyLoaded | source=Hospital_B_private.pem
+2025-11-10 21:14:40 [INFO] [Hospital_B] Loading public key for Hospital_A from 'Hospital_A_public.pem'...
+2025-11-10 21:14:40 [INFO] [Hospital_B] PublicKeyLoaded | owner=Hospital_A | source=Hospital_A_public.pem
+2025-11-10 21:14:40 [INFO] [Hospital_B] Loading public key for Hospital_B from 'Hospital_B_public.pem'...
+2025-11-10 21:14:40 [INFO] [Hospital_B] PublicKeyLoaded | owner=Hospital_B | source=Hospital_B_public.pem
+2025-11-10 21:14:40 [INFO] [Hospital_B] Directories ready: data_dir='hospital_B_data', received_dir='hospital_B_received'
+2025-11-10 21:14:40 [INFO] [Hospital_B] Background server thread started.
+2025-11-10 21:14:40 [INFO] [Hospital_B] Server listening on 0.0.0.0:65002
+2025-11-10 21:16:35 [INFO] [Hospital_B] Accepted connection from ('127.0.0.1', 61628)
+2025-11-10 21:16:35 [INFO] [Hospital_B] Request_Received | from_hospital=Hospital_A | message_preview=Request:patient_123.txt | signature_len=256 | signature_preview=330e5cc93b369e54075adb63e77696e3...
+2025-11-10 21:16:35 [INFO] [Hospital_B] VerifySignature_Start | algo=RSA | hash=SHA-256
+2025-11-10 21:16:35 [INFO] [Hospital_B] VerifySignature_Success | note=Requester authenticated
+2025-11-10 21:16:35 [INFO] [Hospital_B] Valid request for 'patient_123.txt' from Hospital_A
+2025-11-10 21:16:35 [INFO] [Hospital_B] Approval pending: id=c7ecf82a-cf64-4aba-9b28-72db9f2b3e2b, from=Hospital_A, file=patient_123.txt
+2025-11-10 21:16:35 [DEBUG] [Hospital_B] Waiting for decision: id=c7ecf82a-cf64-4aba-9b28-72db9f2b3e2b, requester=Hospital_A, file=patient_123.txt
+2025-11-10 21:16:35 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-10 21:16:36 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-10 21:16:36 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-10 21:16:37 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-10 21:16:38 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-10 21:16:39 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-10 21:16:39 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-10 21:16:40 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-10 21:16:41 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-10 21:16:42 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-10 21:16:43 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-10 21:16:43 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-10 21:16:44 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-10 21:16:45 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-10 21:16:45 [INFO] [Hospital_B] Staff DENIED request_id=c7ecf82a-cf64-4aba-9b28-72db9f2b3e2b from=Hospital_A file=patient_123.txt
+2025-11-10 21:16:45 [INFO] [Hospital_B] Request c7ecf82a-cf64-4aba-9b28-72db9f2b3e2b denied.
+2025-11-10 21:16:45 [INFO] [Hospital_B] Connection from Hospital_A closed.
+2025-11-10 21:17:29 [INFO] [Hospital_B] Accepted connection from ('127.0.0.1', 62874)
+2025-11-10 21:17:29 [INFO] [Hospital_B] Request_Received | from_hospital=Hospital_A | message_preview=Request:patient_123.txt | signature_len=256 | signature_preview=4021d5b18b82a1929b02075e30d64d06...
+2025-11-10 21:17:29 [INFO] [Hospital_B] VerifySignature_Start | algo=RSA | hash=SHA-256
+2025-11-10 21:17:29 [INFO] [Hospital_B] VerifySignature_Success | note=Requester authenticated
+2025-11-10 21:17:29 [INFO] [Hospital_B] Valid request for 'patient_123.txt' from Hospital_A
+2025-11-10 21:17:29 [INFO] [Hospital_B] Approval pending: id=9fd4d428-5bb9-44fe-890c-083ebb04b605, from=Hospital_A, file=patient_123.txt
+2025-11-10 21:17:29 [DEBUG] [Hospital_B] Waiting for decision: id=9fd4d428-5bb9-44fe-890c-083ebb04b605, requester=Hospital_A, file=patient_123.txt
+2025-11-10 21:17:30 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-10 21:17:31 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-10 21:17:31 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-10 21:17:32 [INFO] [Hospital_B] Staff DENIED request_id=9fd4d428-5bb9-44fe-890c-083ebb04b605 from=Hospital_A file=patient_123.txt
+2025-11-10 21:17:32 [INFO] [Hospital_B] Request 9fd4d428-5bb9-44fe-890c-083ebb04b605 denied.
+2025-11-10 21:17:32 [INFO] [Hospital_B] Connection from Hospital_A closed.
+2025-11-10 21:17:40 [INFO] [Hospital_B] Accepted connection from ('127.0.0.1', 54276)
+2025-11-10 21:17:40 [INFO] [Hospital_B] Request_Received | from_hospital=Hospital_A | message_preview=Request:patient_123.txt | signature_len=256 | signature_preview=571e70f00158126e20a47ea0ae6ef1f7...
+2025-11-10 21:17:40 [INFO] [Hospital_B] VerifySignature_Start | algo=RSA | hash=SHA-256
+2025-11-10 21:17:40 [INFO] [Hospital_B] VerifySignature_Success | note=Requester authenticated
+2025-11-10 21:17:40 [INFO] [Hospital_B] Valid request for 'patient_123.txt' from Hospital_A
+2025-11-10 21:17:40 [INFO] [Hospital_B] Approval pending: id=4bc2b1c2-9a2b-4875-93dc-938131ed1f3e, from=Hospital_A, file=patient_123.txt
+2025-11-10 21:17:40 [DEBUG] [Hospital_B] Waiting for decision: id=4bc2b1c2-9a2b-4875-93dc-938131ed1f3e, requester=Hospital_A, file=patient_123.txt
+2025-11-10 21:17:41 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-10 21:17:42 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-10 21:17:43 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-10 21:17:43 [INFO] [Hospital_B] Staff APPROVED request_id=4bc2b1c2-9a2b-4875-93dc-938131ed1f3e from=Hospital_A file=patient_123.txt
+2025-11-10 21:17:43 [INFO] [Hospital_B] Request 4bc2b1c2-9a2b-4875-93dc-938131ed1f3e approved. Encrypting and sending...
+2025-11-10 21:17:43 [INFO] [Hospital_B] File_Read | file=patient_123.txt | size=103 | preview=50415449454e54205245434f52443a20...
+2025-11-10 21:17:43 [INFO] [Hospital_B] SessionKeys_Generated | aes_key_len=32 | aes_key_preview=70278c7b3fed7dde... | hmac_key_len=32 | hmac_key_preview=432bf457a55bd356...
+2025-11-10 21:17:43 [INFO] [Hospital_B] AES_Encrypt_Done | iv_hex=4d5cdab5eabc835ca60504bf784d219e | plaintext_len=103 | ciphertext_len=112 | ciphertext_preview=e8c31db9f5b7c08968972167ded3de43...
+2025-11-10 21:17:43 [INFO] [Hospital_B] HMAC_Generate_Done | tag_len=32 | tag_preview=e09b2b8f779656e0dc3978ae0da7426b...
+2025-11-10 21:17:43 [INFO] [Hospital_B] RSA_EncryptKeys_Start | combined_len=64 | combined_preview=70278c7b3fed7dde25981276ffc8cee0...
+2025-11-10 21:17:43 [INFO] [Hospital_B] RSA_EncryptKeys_Done | enc_keys_len=256 | enc_keys_preview=20d04dfc364bc44bd53c679f395d1ada...
+2025-11-10 21:17:43 [INFO] [Hospital_B] Secure package for 'patient_123.txt' sent to Hospital_A.
+2025-11-10 21:17:43 [INFO] [Hospital_B] Connection from Hospital_A closed.
+2025-11-17 10:40:39 [INFO] [Hospital_B] Initializing node with cryptographic material...
+2025-11-17 10:40:39 [INFO] [Hospital_B] Loading private key from 'Hospital_B_private.pem'...
+2025-11-17 10:40:39 [INFO] [Hospital_B] PrivateKeyLoaded | source=Hospital_B_private.pem
+2025-11-17 10:40:39 [INFO] [Hospital_B] Loading public key from 'Hospital_B_public.pem'...
+2025-11-17 10:40:39 [INFO] [Hospital_B] PublicKeyLoaded | owner=Hospital_B | source=Hospital_B_public.pem
+2025-11-17 10:40:39 [INFO] [Hospital_B] Directories ready: data_dir='Hospital_B_data', received_dir='Hospital_B_received'
+2025-11-17 10:40:39 [WARNING] [Hospital_B] Failed to register hospital in registry (name=Hospital_B): name 'pub_pem' is not defined
+2025-11-17 10:40:39 [INFO] [Hospital_B] Background server thread started.
+2025-11-17 10:40:39 [ERROR] [Hospital_B] Failed to bind P2P port 127.0.0.1:65001: [WinError 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted
+2025-11-18 18:33:31 [INFO] [Hospital_B] Initializing node with cryptographic material...
+2025-11-18 18:33:31 [INFO] [Hospital_B] Loading SIGNING private key from 'Hospital_B_sign_private.pem'...
+2025-11-18 18:35:38 [INFO] [Hospital_B] Initializing node with cryptographic material...
+2025-11-18 18:35:38 [INFO] [Hospital_B] Loading SIGNING private key from 'Hospital_B_sign_private.pem'...
+2025-11-18 18:35:38 [INFO] [Hospital_B] SignPrivateKeyLoaded | source=Hospital_B_sign_private.pem
+2025-11-18 18:35:38 [INFO] [Hospital_B] Loading ENCRYPTION private key from 'Hospital_B_enc_private.pem'...
+2025-11-18 18:35:38 [INFO] [Hospital_B] EncPrivateKeyLoaded | source=Hospital_B_enc_private.pem
+2025-11-18 18:35:38 [INFO] [Hospital_B] SignPublicKeyDerived | length=451
+2025-11-18 18:35:38 [INFO] [Hospital_B] EncPublicKeyDerived | length=451
+2025-11-18 18:35:38 [INFO] [Hospital_B] Directories ready: data_dir='hospital_B_data', received_dir='hospital_B_received'
+2025-11-18 18:35:38 [ERROR] [Hospital_B] Failed to register hospital in registry: register_hospital() got an unexpected keyword argument 'sign_public_pem'. Did you mean 'sign_pub_pem'?
+2025-11-18 18:35:38 [INFO] [Hospital_B] Background server thread started.
+2025-11-18 18:35:38 [INFO] [Hospital_B] Server listening on 0.0.0.0:65002
+2025-11-18 18:45:18 [INFO] [Hospital_B] Initializing node with cryptographic material...
+2025-11-18 18:45:18 [INFO] [Hospital_B] Loading SIGNING private key from 'Hospital_B_sign_private.pem'...
+2025-11-18 18:45:18 [INFO] [Hospital_B] SignPrivateKeyLoaded | source=Hospital_B_sign_private.pem
+2025-11-18 18:45:18 [INFO] [Hospital_B] Loading ENCRYPTION private key from 'Hospital_B_enc_private.pem'...
+2025-11-18 18:45:18 [INFO] [Hospital_B] EncPrivateKeyLoaded | source=Hospital_B_enc_private.pem
+2025-11-18 18:45:18 [INFO] [Hospital_B] SignPublicKeyDerived | length=451
+2025-11-18 18:45:18 [INFO] [Hospital_B] EncPublicKeyDerived | length=451
+2025-11-18 18:45:18 [INFO] [Hospital_B] Directories ready: data_dir='hospital_B_data', received_dir='hospital_B_received'
+2025-11-18 18:45:19 [INFO] [Hospital_B] Registry updated for Hospital_B: host=0.0.0.0, port=65002
+2025-11-18 18:45:19 [INFO] [Hospital_B] Background server thread started.
+2025-11-18 18:45:19 [INFO] [Hospital_B] Server listening on 0.0.0.0:65002
+2025-11-18 19:09:03 [INFO] [Hospital_B] Initializing node with cryptographic material...
+2025-11-18 19:09:03 [INFO] [Hospital_B] Loading SIGNING private key from 'Hospital_B_sign_private.pem'...
+2025-11-18 19:09:03 [INFO] [Hospital_B] SignPrivateKeyLoaded | source=Hospital_B_sign_private.pem
+2025-11-18 19:09:03 [INFO] [Hospital_B] Loading ENCRYPTION private key from 'Hospital_B_enc_private.pem'...
+2025-11-18 19:09:03 [INFO] [Hospital_B] EncPrivateKeyLoaded | source=Hospital_B_enc_private.pem
+2025-11-18 19:09:03 [INFO] [Hospital_B] SignPublicKeyDerived | length=451
+2025-11-18 19:09:03 [INFO] [Hospital_B] EncPublicKeyDerived | length=451
+2025-11-18 19:09:03 [INFO] [Hospital_B] Directories ready: data_dir='hospital_B_data', received_dir='hospital_B_received'
+2025-11-18 19:09:04 [INFO] [Hospital_B] Registry updated for Hospital_B: host=192.168.1.50, port=65002
+2025-11-18 19:09:04 [INFO] [Hospital_B] Background server thread started.
+2025-11-18 19:09:04 [INFO] [Hospital_B] Server listening on 0.0.0.0:65002
+2025-11-18 19:09:20 [INFO] [Hospital_B] Initializing node with cryptographic material...
+2025-11-18 19:09:20 [INFO] [Hospital_B] Loading SIGNING private key from 'Hospital_B_sign_private.pem'...
+2025-11-18 19:09:20 [INFO] [Hospital_B] SignPrivateKeyLoaded | source=Hospital_B_sign_private.pem
+2025-11-18 19:09:20 [INFO] [Hospital_B] Loading ENCRYPTION private key from 'Hospital_B_enc_private.pem'...
+2025-11-18 19:09:20 [INFO] [Hospital_B] EncPrivateKeyLoaded | source=Hospital_B_enc_private.pem
+2025-11-18 19:09:20 [INFO] [Hospital_B] SignPublicKeyDerived | length=451
+2025-11-18 19:09:20 [INFO] [Hospital_B] EncPublicKeyDerived | length=451
+2025-11-18 19:09:20 [INFO] [Hospital_B] Directories ready: data_dir='hospital_B_data', received_dir='hospital_B_received'
+2025-11-18 19:09:21 [INFO] [Hospital_B] Registry updated for Hospital_B: host=127.0.0.1, port=65002
+2025-11-18 19:09:21 [INFO] [Hospital_B] Background server thread started.
+2025-11-18 19:09:21 [INFO] [Hospital_B] Server listening on 0.0.0.0:65002
+2025-11-18 19:10:30 [INFO] [Hospital_B] Accepted connection from ('127.0.0.1', 38752)
+2025-11-18 19:10:30 [INFO] [Hospital_B] Request_Received | from_hospital=Hospital_A | message_preview=Request:patient_123.txt | signature_len=256 | signature_preview=b657a623a7f612c5ac4303109ad5097f...
+2025-11-18 19:10:30 [ERROR] [Hospital_B] Registry entry for 'Hospital_A' missing public keys.
+2025-11-18 19:10:30 [INFO] [Hospital_B] Connection from Hospital_A closed.
+2025-11-18 19:34:54 [INFO] [Hospital_B] Initializing node with cryptographic material...
+2025-11-18 19:34:54 [INFO] [Hospital_B] Loading SIGNING private key from 'Hospital_B_sign_private.pem'...
+2025-11-18 19:34:54 [INFO] [Hospital_B] SignPrivateKeyLoaded | source=Hospital_B_sign_private.pem
+2025-11-18 19:34:54 [INFO] [Hospital_B] Loading ENCRYPTION private key from 'Hospital_B_enc_private.pem'...
+2025-11-18 19:34:54 [INFO] [Hospital_B] EncPrivateKeyLoaded | source=Hospital_B_enc_private.pem
+2025-11-18 19:34:54 [INFO] [Hospital_B] SignPublicKeyDerived | length=451
+2025-11-18 19:34:54 [INFO] [Hospital_B] EncPublicKeyDerived | length=451
+2025-11-18 19:34:54 [INFO] [Hospital_B] Directories ready: data_dir='hospital_B_data', received_dir='hospital_B_received'
+2025-11-18 19:34:55 [INFO] [Hospital_B] Registry updated for Hospital_B: host=127.0.0.1, port=65002
+2025-11-18 19:34:55 [INFO] [Hospital_B] Background server thread started.
+2025-11-18 19:34:55 [INFO] [Hospital_B] Server listening on 0.0.0.0:65002
+2025-11-18 19:35:01 [INFO] [Hospital_B] SignMessage_Start | algo=RSA | hash=SHA-256 | message_preview=Request:patient_123.txt
+2025-11-18 19:35:01 [INFO] [Hospital_B] SignMessage_Done | signature_len=256 | signature_preview=4a19f07b2d2b7c1de4e27ebca66b4d0f...
+2025-11-18 19:35:01 [INFO] [Hospital_B] Connecting to Hospital_A at 127.0.0.1:65001...
+2025-11-18 19:35:01 [INFO] [Hospital_B] Sending secure request for 'patient_123.txt'...
+2025-11-18 19:35:01 [WARNING] [Hospital_B] Server error response: File Not Found.
+2025-11-18 19:35:08 [INFO] [Hospital_B] Accepted connection from ('127.0.0.1', 12827)
+2025-11-18 19:35:08 [INFO] [Hospital_B] Request_Received | from_hospital=Hospital_A | message_preview=Request:patient_123.txt | signature_len=256 | signature_preview=545e2f5ddae7fa1ff33927382bc1cc24...
+2025-11-18 19:35:08 [INFO] [Hospital_B] VerifySignature_Start | algo=RSA | hash=SHA-256
+2025-11-18 19:35:08 [INFO] [Hospital_B] VerifySignature_Success | note=Requester authenticated
+2025-11-18 19:35:08 [INFO] [Hospital_B] Valid request for 'patient_123.txt' from Hospital_A
+2025-11-18 19:35:08 [INFO] [Hospital_B] Approval pending: id=4a846f33-1bfb-485f-a6a5-a232f6a34f4b, from=Hospital_A, file=patient_123.txt
+2025-11-18 19:35:08 [DEBUG] [Hospital_B] Waiting for decision: id=4a846f33-1bfb-485f-a6a5-a232f6a34f4b, requester=Hospital_A, file=patient_123.txt
+2025-11-18 19:35:08 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-18 19:35:09 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-18 19:35:09 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-18 19:35:10 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-18 19:35:11 [INFO] [Hospital_B] Pending approvals count=1
+2025-11-18 19:35:11 [INFO] [Hospital_B] Staff APPROVED request_id=4a846f33-1bfb-485f-a6a5-a232f6a34f4b from=Hospital_A file=patient_123.txt
+2025-11-18 19:35:11 [INFO] [Hospital_B] Request 4a846f33-1bfb-485f-a6a5-a232f6a34f4b approved. Encrypting and sending...
+2025-11-18 19:35:11 [INFO] [Hospital_B] File_Read | file=patient_123.txt | size=103 | preview=50415449454e54205245434f52443a20...
+2025-11-18 19:35:11 [INFO] [Hospital_B] SessionKeys_Generated | aes_key_len=32 | aes_key_preview=5016b93c4c6481d0... | hmac_key_len=32 | hmac_key_preview=ef15dc2fe3b20d44...
+2025-11-18 19:35:11 [INFO] [Hospital_B] AES_Encrypt_Done | iv_hex=3a25c88346780d32e710100cf3e69168 | plaintext_len=103 | ciphertext_len=112 | ciphertext_preview=b41fb2f7890934c898fa29c0de3d25fb...
+2025-11-18 19:35:11 [INFO] [Hospital_B] HMAC_Generate_Done | tag_len=32 | tag_preview=092ce942026b93201b979ee5a00ac0e4...
+2025-11-18 19:35:11 [INFO] [Hospital_B] RSA_EncryptKeys_Start | combined_len=64 | combined_preview=5016b93c4c6481d0dc08e28f2cbc180d...
+2025-11-18 19:35:11 [INFO] [Hospital_B] RSA_EncryptKeys_Done | enc_keys_len=256 | enc_keys_preview=346ea4dbc463b1509bf0fef5cbd05346...
+2025-11-18 19:35:11 [INFO] [Hospital_B] Secure package for 'patient_123.txt' sent to Hospital_A.
+2025-11-18 19:35:11 [INFO] [Hospital_B] Connection from Hospital_A closed.
