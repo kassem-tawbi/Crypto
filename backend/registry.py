@@ -8,8 +8,8 @@ from pymongo import MongoClient, errors
 import certifi
 
 # -------------------------------------------------------------------
-# 1) CONFIGURE THIS WITH YOUR REAL ATLAS CONNECTION STRING
-#    (Keep the "mongodb+srv://" prefix)
+# CONFIGURE THIS WITH YOUR REAL ATLAS CONNECTION STRING
+# (keep "mongodb+srv://" prefix)
 # -------------------------------------------------------------------
 MONGO_URI = (
     "mongodb+srv://trkhmz503_db_user:root@p2pfilesharing.l5vvizb.mongodb.net/?appName=p2pFileSharing"
@@ -21,28 +21,33 @@ COLLECTION_NAME = "hospitals"
 logger = logging.getLogger("registry")
 
 # -------------------------------------------------------------------
-# 2) CREATE A GLOBAL CLIENT WITH PROPER TLS SETTINGS
+# GLOBAL CLIENT
 # -------------------------------------------------------------------
 try:
     _client = MongoClient(
         MONGO_URI,
-        # Atlas requires TLS; this ensures we use a modern CA bundle
         tls=True,
         tlsCAFile=certifi.where(),
-        serverSelectionTimeoutMS=30_000,  # 30 seconds
+        serverSelectionTimeoutMS=30_000,
     )
     _db = _client[DB_NAME]
     _coll = _db[COLLECTION_NAME]
 except Exception as e:
-    # If this fails, calls to register/get will still raise, but at least we log why.
     logger.exception("Failed to create MongoDB client: %s", e)
     _client = None
     _db = None
     _coll = None
 
 
+def _ensure_coll():
+    if _coll is None:
+        raise RuntimeError(
+            "MongoDB client is not initialized (see earlier registry errors)."
+        )
+
+
 # -------------------------------------------------------------------
-# 3) PUBLIC API
+# PUBLIC API
 # -------------------------------------------------------------------
 
 def register_hospital(
@@ -60,8 +65,7 @@ def register_hospital(
       - sign_pub_pem: PEM string of RSA signing public key
       - enc_pub_pem: PEM string of RSA encryption public key
     """
-    if _coll is None:
-        raise RuntimeError("MongoDB client is not initialized (see earlier errors).")
+    _ensure_coll()
 
     doc = {
         "name": name,
@@ -90,10 +94,10 @@ def get_hospital(name: str) -> Optional[Dict[str, Any]]:
         "sign_pub_key": "-----BEGIN PUBLIC KEY----- ...",
         "enc_pub_key": "-----BEGIN PUBLIC KEY----- ...",
     }
+
     or None if not found.
     """
-    if _coll is None:
-        raise RuntimeError("MongoDB client is not initialized (see earlier errors).")
+    _ensure_coll()
 
     try:
         doc = _coll.find_one({"name": name})
@@ -115,33 +119,18 @@ def get_hospital(name: str) -> Optional[Dict[str, Any]]:
 
 def list_hospitals(exclude_name: Optional[str] = None) -> List[Dict[str, Any]]:
     """
-    Return all hospitals registered in the registry.
-
-    Each entry has keys:
-      - name, p2p_host, p2p_port, sign_pub_key, enc_pub_key
+    List all hospitals in the registry.
+    If exclude_name is provided, that hospital is omitted (e.g., 'myself').
     """
-    if _coll is None:
-        raise RuntimeError("MongoDB client is not initialized (see earlier errors).")
+    _ensure_coll()
 
     query: Dict[str, Any] = {}
-    if exclude_name is not None:
+    if exclude_name:
         query["name"] = {"$ne": exclude_name}
 
     try:
-        cursor = _coll.find(query)
+        cursor = _coll.find(query, {"_id": 0})
+        return list(cursor)
     except errors.PyMongoError as e:
         logger.exception("list_hospitals failed: %s", e)
         raise
-
-    result: List[Dict[str, Any]] = []
-    for doc in cursor:
-        result.append(
-            {
-                "name": doc.get("name"),
-                "p2p_host": doc.get("p2p_host"),
-                "p2p_port": doc.get("p2p_port"),
-                "sign_pub_key": doc.get("sign_pub_key"),
-                "enc_pub_key": doc.get("enc_pub_key"),
-            }
-        )
-    return result

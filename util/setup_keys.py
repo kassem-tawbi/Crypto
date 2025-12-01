@@ -41,7 +41,12 @@ def generate_and_save_keys(hospital_name: str):
     Generates two RSA key pairs for a hospital:
       - one for SIGNING
       - one for ENCRYPTION
-    and saves them to PEM files.
+    and saves them to PEM files named:
+
+      <hospital>_sign_private.pem
+      <hospital>_sign_public.pem
+      <hospital>_enc_private.pem
+      <hospital>_enc_public.pem
     """
 
     # Signing key pair
@@ -57,39 +62,72 @@ def generate_and_save_keys(hospital_name: str):
     print(f"Generated signing and encryption keys for {hospital_name}")
 
 
+def _dir_prefix_for(hospital_name: str) -> str:
+    """
+    Map a hospital name to the directory prefix used by the node.
+
+    For your existing setup:
+      - Hospital_A -> hospital_A
+      - Hospital_B -> hospital_B
+    For any other name, we just use the hospital_name as-is.
+
+    Then data/received directories are:
+      <prefix>_data, <prefix>_received
+    """
+    if hospital_name == "Hospital_A":
+        return "hospital_A"
+    if hospital_name == "Hospital_B":
+        return "hospital_B"
+    # Generic case: use the name directly (you can align CONFIG with this).
+    return hospital_name
+
+
 def create_dummy_data_for(hospital_name: str):
     """
-    Minimal test data:
-      - For Hospital_B: create a dummy record in hospital_B_data.
-      - For Hospital_A: ensure hospital_A_received exists.
+    Create minimal local test data for this hospital:
+
+      - <prefix>_data/
+      - <prefix>_received/
+      - <prefix>_data/patient_123.txt  (dummy patient record)
+
+    Where <prefix> = _dir_prefix_for(hospital_name).
     """
-    if hospital_name == "Hospital_B":
-        os.makedirs("hospital_B_data", exist_ok=True)
-        with open("hospital_B_data/patient_123.txt", "w") as f:
+    prefix = _dir_prefix_for(hospital_name)
+    data_dir = f"{prefix}_data"
+    recv_dir = f"{prefix}_received"
+
+    os.makedirs(data_dir, exist_ok=True)
+    os.makedirs(recv_dir, exist_ok=True)
+
+    # Always drop one dummy record into this hospital's data dir
+    patient_path = os.path.join(data_dir, "patient_123.txt")
+    if not os.path.exists(patient_path):
+        with open(patient_path, "w", encoding="utf-8") as f:
             f.write("PATIENT RECORD: John Doe\n")
             f.write("DOB: 1980-01-15\n")
             f.write("Blood Type: O+\n")
             f.write("Allergies: Penicillin\n")
             f.write("--- END OF RECORD ---")
-        print("Created dummy data for Hospital_B (hospital_B_data/patient_123.txt)")
+        print(f"Created dummy data for {hospital_name} ({patient_path})")
+    else:
+        print(f"Dummy data already exists for {hospital_name} ({patient_path})")
 
-    if hospital_name == "Hospital_A":
-        os.makedirs("hospital_A_received", exist_ok=True)
-        print("Created receive directory for Hospital_A (hospital_A_received/)")
+    print(f"Receive directory ready for {hospital_name} ({recv_dir}/)")
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "hospital",
-        choices=["Hospital_A", "Hospital_B"],
-        help="Hospital name whose keys should be generated.",
+        help="Hospital name whose keys should be generated (e.g., Hospital_A, Hospital_B, MyHospital).",
     )
     args = parser.parse_args()
 
-    generate_and_save_keys(args.hospital)
-    create_dummy_data_for(args.hospital)
-    print("\nSetup complete for", args.hospital)
+    hospital_name = args.hospital
+
+    generate_and_save_keys(hospital_name)
+    create_dummy_data_for(hospital_name)
+    print("\nSetup complete for", hospital_name)
 
 
 if __name__ == "__main__":
